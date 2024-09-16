@@ -13,8 +13,11 @@ filmRoutes.get("/read/:id", (req, res) => {
   const {
     params: { id },
   } = req;
+
   fs.readFile(path.join(__dirname, "../movies.txt"), (err, data) => {
-    const movie = JSON.parse(data.toString()).find((item) => item.id == id);
+    const movieArr = JSON.parse(data.toString());
+    if (id > movieArr.length) res.status(500).send('request invalid')
+    const movie = movieArr.find((item) => item.id == id);
     res.status(200).send(movie);
   });
 });
@@ -26,28 +29,23 @@ filmRoutes.post("/delete", (req, res) => {
 
   fs.readFile(path.join(__dirname, "../movies.txt"), (err, data) => {
     const movieArr = JSON.parse(data.toString());
+    if (id < 1 || id > movieArr.length) res.status(500).send('request invalid')
     const deleteMovie = movieArr[id - 1];
     const newArr = fixIdInArray([
       ...movieArr.slice(0, id - 1),
       ...movieArr.slice(id),
     ]);
 
-    fs.writeFile("movies.txt", JSON.stringify(newArr), (err) => {
-      if (err) {
-        res.status(500).send("error");
-      } else {
-        res.status(200).send(deleteMovie);
-      }
-    });
+    writeUpdateMovieArray(res, newArr, deleteMovie);
   });
 });
 
 filmRoutes.post("/update", (req, res) => {
   const { id, title, rating, year, budget, gross, poster, position } = req.body;
-  console.log(rating), console.log(title);
 
   fs.readFile(path.join(__dirname, "../movies.txt"), (err, data) => {
     const movieArr = JSON.parse(data.toString());
+    if (id < 1 || id > movieArr.length) res.status(500).send('request invalid')
     const movieForUpdate = movieArr.find((item) => item.id == id);
     const updateMovie = {
       id: id,

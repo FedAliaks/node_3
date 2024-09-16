@@ -10,7 +10,7 @@ app.get("/", (req, res) => {
 
 app.listen(3000, () => {
   console.log("server has already started on port 3000");
-  /*     getMoviesArr(); */
+      getMoviesArr();
 });
 
 app.use(express.json());
