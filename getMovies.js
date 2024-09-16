@@ -38,7 +38,7 @@ async function getMoviesArr() {
   });
 
   fs.writeFile("movies.txt", JSON.stringify(movies), (err) => {
-    if (err) console.log(err.message)
+    if (err) console.log(err.message);
   });
 }
 
