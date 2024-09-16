@@ -1,7 +1,11 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const { fixIdInArray, writeUpdateMovieArray } = require("../helpers");
+const {
+  fixIdInArray,
+  writeUpdateMovieArray,
+  sortArray,
+} = require("../helpers");
 
 const filmRoutes = express.Router();
 
@@ -58,6 +62,14 @@ filmRoutes.post("/update", (req, res) => {
 
     const newArr = movieArr.map((item) => (item.id != id ? item : updateMovie));
     writeUpdateMovieArray(res, newArr, updateMovie);
+  });
+});
+
+filmRoutes.get("/readall", (req, res) => {
+  fs.readFile(path.join(__dirname, "../movies.txt"), (err, data) => {
+    const movieArr = JSON.parse(data.toString());
+    const sortedArr = sortArray(movieArr);
+    res.status(200).send(sortedArr);
   });
 });
 
